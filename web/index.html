@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#3c3523">
+  <title>Carnet d’aventure — Dofus × Archipelago</title>
+  <meta name="description" content="Ton carnet de quêtes Dofus : objectifs, autorisations et échanges Archipelago dans une interface locale.">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="content.js"></script>
+  <script defer src="campaign.js"></script>
+  <script defer src="engine.js"></script>
+  <script defer src="icons.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="app-frame">
+    <aside class="sidebar" aria-label="Navigation principale">
+      <a class="emblem" href="#overview" aria-label="Carnet d’aventure, accueil" id="emblem"></a>
+      <nav id="navigation">
+        <button data-view="overview" class="nav-item active" aria-current="page"><span data-icon="compass"></span><span>Vue d’ensemble</span></button>
+        <button data-view="objectives" class="nav-item"><span data-icon="swords"></span><span>Objectifs</span><small id="nav-count">12</small></button>
+        <button data-view="permits" class="nav-item"><span data-icon="scroll"></span><span>Autorisations</span></button>
+        <button data-view="exchanges" class="nav-item"><span data-icon="exchange"></span><span>Échanges</span></button>
+        <button data-action="campaign" class="nav-item"><span data-icon="book"></span><span>Campagne</span></button>
+        <button data-action="connection" class="nav-item"><span data-icon="link"></span><span>Connexion</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="adventure-progress" id="progress-ring"><span id="ring-icon"></span></div>
+        <strong id="sidebar-progress">4 <span>/ 12</span></strong><span class="sidebar-caption">objectifs accomplis</span>
+        <button class="sidebar-help" data-action="help"><span data-icon="book"></span>Le guide de l’aventure</button>
+        <span class="side-flourish" aria-hidden="true">❧</span>
+      </div>
+    </aside>
+    <div class="app-body">
+      <header class="topbar">
+        <div class="brand"><span class="brand-leaf" aria-hidden="true">❧</span><div><div class="brand-title">Carnet d’aventure</div><div class="brand-subtitle">DOFUS <span>×</span> ARCHIPELAGO</div></div></div>
+        <div class="topbar-actions"><button id="connection-status" class="status-pill demo" data-action="connection"><span class="status-dot"></span>Aperçu</button><span class="topbar-divider"></span><button id="profile-button" class="profile-button" data-action="profile">JoueurDofus <span>⌄</span></button><button class="icon-button settings-button" data-action="profile" aria-label="Paramètres du personnage"><span data-icon="settings"></span></button></div>
+      </header>
+      <div id="mode-banner" class="mode-banner"></div>
+      <div class="workspace">
+        <main id="main-content" tabindex="-1"></main>
+        <aside id="right-content" class="right-column" aria-label="Autorisations et échanges"></aside>
+      </div>
+      <footer><span>Ton aventure, un objectif à la fois.</span><button data-action="help">Comment jouer ?</button><span id="footer-server">Aperçu indépendant de ta partie</span></footer>
+    </div>
+  </div>
+  <div id="toast-region" class="toast-region" role="status" aria-live="polite" aria-atomic="false"></div>
+  <dialog id="connection-dialog" aria-labelledby="connection-title">
+    <button class="dialog-close" data-close aria-label="Fermer">×</button>
+    <div class="dialog-symbol" data-icon="link"></div><p class="eyebrow">REPRENDRE L’AVENTURE</p><h2 id="connection-title">Relier ton carnet</h2>
+    <p class="dialog-intro">Connecte-toi au serveur de ta partie Dofus + HuniePop. Tes objets et tes objectifs déjà validés seront récupérés.</p>
+    <form id="connection-form">
+      <div id="connection-campaign-row"><label for="connection-campaign">Campagne du serveur</label><select id="connection-campaign"><option value="current">Campagne Dofus générale</option><option value="legacy">Ancienne partie d’exemple</option></select><small>Choisis l’ancienne partie uniquement pour reprendre le premier prototype.</small></div>
+      <label for="server">Serveur Archipelago</label><input id="server" name="server" value="localhost:38281" placeholder="localhost:38281" required spellcheck="false" autocomplete="off"><small>Sur le même PC : localhost:38281. Laisse la fenêtre du serveur ouverte.</small>
+      <label for="player">Nom du joueur Dofus</label><input id="player" name="player" value="JoueurDofus" required spellcheck="false" autocomplete="off"><small>Choisis ton nom dans l’éditeur avant génération. Pour rejoindre une partie, saisis le nom exact de son YAML.</small>
+      <label for="password">Mot de passe <span>(facultatif)</span></label><input id="password" name="password" type="password" autocomplete="off" placeholder="Vide si ton serveur n’en utilise pas">
+      <div class="game-id">Monde <code id="connection-game-id">Manual_Dofus_Communaute</code></div>
+      <p id="connection-error" class="form-error" role="alert"></p>
+      <button class="button primary wide" id="connect-submit" type="submit">Connecter mon aventure <span>→</span></button>
+    </form>
+    <div class="dialog-links"><button data-action="demo">Explorer l’aperçu</button><button data-action="disconnect" id="disconnect-button">Déconnecter le carnet</button></div>
+  </dialog>
+  <dialog id="profile-dialog" aria-labelledby="profile-title">
+    <button class="dialog-close" data-close aria-label="Fermer">×</button><p class="eyebrow">TON PERSONNAGE</p><h2 id="profile-title">Le voyageur</h2>
+    <p class="dialog-intro">Ces notes rappellent tes règles de départ. Elles ne changent pas les autorisations reçues.</p>
+    <form id="profile-form">
+      <label for="character-class">Classe choisie ou tirée au sort</label><input id="character-class" maxlength="40" placeholder="Ex. : ta classe Dofus">
+      <div class="form-columns"><div><label for="primary-element">Élément de départ</label><select id="primary-element"><option value="">À définir</option><option>Terre</option><option>Feu</option><option>Eau</option><option>Air</option></select></div><div><label for="secondary-element">Élément secondaire</label><select id="secondary-element"><option value="">À définir</option><option>Terre</option><option>Feu</option><option>Eau</option><option>Air</option></select></div></div>
+      <p id="profile-rule-note" class="field-note">Choisis deux éléments utilisables tôt par ta classe. Le second nécessite l’autorisation « Deuxieme element ».</p>
+      <button class="button primary wide" type="submit">Enregistrer mes notes</button>
+    </form>
+  </dialog>
+  <dialog id="help-dialog" class="help-dialog" aria-labelledby="help-title">
+    <button class="dialog-close" data-close aria-label="Fermer">×</button><p class="eyebrow">LE GUIDE DE L’AVENTURE</p><h2 id="help-title">Comment jouer ?</h2>
+    <div class="guide-step"><b>1</b><div><h3>Connecte ta partie</h3><p>Héberge le ZIP généré avec Dofus et HuniePop, puis connecte ce carnet avec ton joueur Dofus. Il peut remplacer Manual Client pour cet exemple.</p></div></div>
+    <div class="guide-step"><b>2</b><div><h3>Joue, puis valide</h3><p>Accomplis l’action dans Dofus. Les compteurs sont tes notes : les modifier n’envoie rien. Le bouton « Valider » envoie le check ; le serveur confirme ensuite sa réussite.</p></div></div>
+    <div class="guide-step"><b>3</b><div><h3>Reçois tes autorisations</h3><p>Un permis reçu ouvre les objectifs correspondants. Les souvenirs n’ont pas d’effet. La récompense de chaque objectif peut appartenir à un autre jeu ou à ton propre monde.</p></div></div>
+    <div class="guide-step"><b>4</b><div><h3>Termine ton aventure</h3><p id="help-goal"></p></div></div>
+    <details><summary>Règles de cette campagne</summary><p id="help-rules" style="white-space:pre-wrap"></p></details>
+    <details><summary>Reprendre ma progression</summary><p>Le serveur conserve les checks et les objets. Les compteurs partiels sont enregistrés dans ce navigateur, séparément pour chaque partie et chaque joueur. Garde le même dossier et le même navigateur pour les retrouver.</p></details>
+    <p class="help-note">Le carnet ne lit pas Dofus : la réalisation des actions reste sous ta responsabilité. Charge les fichiers de la même campagne que le serveur.</p>
+  </dialog>
+  <dialog id="campaign-dialog" aria-labelledby="campaign-title">
+    <button class="dialog-close" data-close aria-label="Fermer">×</button><p class="eyebrow">CHOISIR UNE AVENTURE</p><h2 id="campaign-title">Ta campagne</h2>
+    <p><strong id="current-campaign"></strong></p><p class="game-id"><code id="current-game-id"></code></p>
+    <p>Importer une campagne ferme la connexion du carnet et ouvre son aperçu. Le serveur et la partie en cours restent inchangés.</p>
+    <label for="campaign-file">Importer le fichier campagne.json</label><input id="campaign-file" type="file" accept=".json,application/json">
+    <p>Pour créer ou modifier les objectifs et les autorisations :</p><a class="button primary" href="editor.html" target="_blank" rel="noopener">Ouvrir l’éditeur de campagne →</a>
+    <div class="dialog-links"><button data-action="restore-campaign">Revenir à la campagne incluse dans ce carnet</button></div>
+  </dialog>
+</body>
+</html>
