@@ -1,0 +1,17 @@
+{
+  "name": "dofus-archipelago",
+  "version": "0.2.1",
+  "private": true,
+  "description": "Carnet local et éditeur de campagnes Dofus pour Archipelago Manual.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "python scripts/build.py",
+    "pretest": "python scripts/build.py",
+    "test": "node --test tests/engine.test.cjs tests/campaign.test.cjs",
+    "check": "python scripts/check.py",
+    "package": "python scripts/package_release.py"
+  }
+}

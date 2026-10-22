@@ -1,0 +1,22 @@
+# Generated applications and release archives
+/build/
+/web/export-assets.js
+
+# Test fixtures and local game data
+/tests/generated*/
+*.apsave
+*.archipelago
+*.apmanual
+*.log
+
+# Local Python / Node / editor state
+__pycache__/
+*.py[cod]
+node_modules/
+.venv/
+.env
+.env.*
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
