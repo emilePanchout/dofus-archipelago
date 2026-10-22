@@ -1,0 +1,16 @@
+name: Proposer une amélioration
+description: Décrire un besoin et un exemple concret.
+title: "[Idée] "
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Quel problème veux-tu résoudre ?
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Comportement souhaité et exemple de campagne
+    validations:
+      required: true

@@ -1,0 +1,28 @@
+name: Signaler un bug
+description: Décrire un problème reproductible du carnet ou de l'éditeur.
+title: "[Bug] "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problème et résultat attendu
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Étapes pour reproduire
+      description: Utilise si possible la campagne d'exemple et indique les actions exactes.
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions du kit, d'Archipelago, du navigateur et du système
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Message d'erreur et précisions
+      description: Retire les mots de passe, adresses privées et informations des autres joueurs.
