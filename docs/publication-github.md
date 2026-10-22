@@ -66,6 +66,12 @@ le YAML d'exemple et les sommes SHA-256. Le tag doit correspondre exactement
 à la version de `package.json`. Aucun secret personnel n'est nécessaire :
 le workflow utilise le jeton temporaire du dépôt avec `contents: write`.
 
+Tu peux aussi utiliser **Releases → Draft a new release** sur GitHub, créer
+le tag `v0.2.1` sur `main`, renseigner le titre et copier les notes de
+`docs/releases/v0.2.1.md`, puis publier. Le workflow ajoute automatiquement
+les quatre fichiers téléchargeables après ses vérifications. Attends sa réussite
+avant de partager la release. Il conserve les fichiers déjà attachés.
+
 Si les règles du dépôt empêchent les releases, le workflow échoue sans publier.
 Tu peux utiliser les fichiers de `build/` pour une release créée manuellement :
 
