@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Check release version
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          PROJECT_VERSION=$(node -p "require('./package.json').version")
+          test "$RELEASE_TAG" = "v$PROJECT_VERSION"
+          test -f "docs/releases/$RELEASE_TAG.md"
+      - run: npm test
+      - run: npm run check
+      - run: npm run package
+      - name: Publish release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          PROJECT_VERSION=$(node -p "require('./package.json').version")
+          gh release create "$RELEASE_TAG" \
+            "build/Dofus-Archipelago-$PROJECT_VERSION.zip" \
+            build/manual_dofus_communaute.apworld \
+            build/JoueurDofus.yaml \
+            build/SHA256SUMS.txt \
+            --verify-tag \
+            --title "Dofus Archipelago $PROJECT_VERSION" \
+            --notes-file "docs/releases/$RELEASE_TAG.md"
