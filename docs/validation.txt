@@ -1,0 +1,54 @@
+Préparation du dépôt public — 22 octobre 2026
+- 20 tests unitaires passent sous Node.js 24.19.0.
+- Build et scripts de contrôle exécutés sous Python 3.12.14, sans dépendance ajoutée.
+- Liens locaux de documentation, syntaxe des sources, HTML autonome, licences et
+  intégrité APWorld vérifiés ; exports de campagne accompagnés des licences.
+- Archive joueurs et APWorld identiques sur deux builds consécutifs.
+- YAML des workflows, modèles d'issues et configuration Dependabot parsés.
+- Après réorganisation : APWorld exporté rempli et parcouru sur les graines
+  21, 42 et 20261022, puis génération complète, via Archipelago source 0.6.9.
+- Workflows CI Windows/Linux et publication de release préparés. Leur exécution
+  sur GitHub n'est pas incluse dans ces contrôles locaux.
+
+Version 0.2.1 — mise à jour des noms
+- Valeurs de départ : JoueurDofus, Communaute, Aventure Dofus.
+- Nom de connexion conservé par campagne ; aucune valeur personnelle imposée.
+- APWorld et YAML génériques inclus, validés sur trois graines avec génération
+  complète via Archipelago 0.6.9.
+- Mode de compatibilité explicite pour l’ancienne partie ; le nom du joueur
+  reste celui de la génération d’origine.
+- Formulaire de connexion générique et choix de compatibilité vérifiés dans
+  Chrome. Les 19 tests unitaires passent après mise à jour ; deux noms de joueurs
+  différents peuvent partager le même monde.
+
+Carnet / atelier v0.2 — contrôles du 22 octobre 2026
+
+18 tests Node réussis : protocole et confirmations, absence d’envoi en aperçu,
+compteurs, reprise, import/compilation de profils, identifiants de campagne,
+références après renommage/suppression, victoire configurable, ZIP et HTML.
+Syntaxe JavaScript de chaque script des HTML exportés vérifiée ; texte utilisateur
+échappé, y compris les séquences de fermeture de balise script.
+
+Moteur source Archipelago 0.6.9, Manual stable manual_stable_20260319,
+commit f14927694656a33923817cd1b2ef556cab3eedda (MIT incluse) :
+- APWorld exporté chargé, remplissage et parcours complets sur les graines
+  21, 42 et 20261022, pour 12 objectifs / 5 autorisations ;
+- même validation pour 7 objectifs / 2 autorisations avec victoire sélectionnée ;
+- même validation pour 3 objectifs / aucune autorisation ;
+- YAML exportés : génération complète de la partie dans les trois cas ;
+- empreinte de campagne retrouvée dans les données du slot ;
+- intégrité CRC des ZIP et syntaxe Python / JSON des APWorld contrôlées.
+
+Serveur réel de test, hors de la partie de l’utilisateur :
+- deux connexions indépendantes au même slot, confirmation partagée ;
+- 12 checks confirmés, 5 autorisations reçues et victoire enregistrée ;
+- reconnexion : checks, inventaire et victoire restaurés.
+
+Navigateur Chrome : formulaire d’objectifs, ajout/modification d’un objectif,
+compteur, sauvegarde du brouillon, aperçu des permis ; ouverture effective des
+HTML autonomes du carnet et de l’éditeur produits par l’export. Interface inspectée
+visuellement sur ordinateur. Les téléchargements sont contrôlés par les tests ZIP.
+
+Limites : client graphique Manual, Dofus et installation Windows Archipelago 0.6.8
+non exécutés ici ; pas de validation sur écran mobile ni détection automatique
+des actions Dofus. La simulation de l’éditeur porte uniquement sur les permis.
