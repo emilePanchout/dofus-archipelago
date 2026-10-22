@@ -3,6 +3,12 @@ name: Release
 on:
   push:
     tags: ['v*']
+  release:
+    types: [published]
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -36,11 +42,24 @@ jobs:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
           PROJECT_VERSION=$(node -p "require('./package.json').version")
-          gh release create "$RELEASE_TAG" \
+          ASSETS=(
             "build/Dofus-Archipelago-$PROJECT_VERSION.zip" \
             build/manual_dofus_communaute.apworld \
             build/JoueurDofus.yaml \
-            build/SHA256SUMS.txt \
-            --verify-tag \
-            --title "Dofus Archipelago $PROJECT_VERSION" \
-            --notes-file "docs/releases/$RELEASE_TAG.md"
+            build/SHA256SUMS.txt
+          )
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            # Complete a release published from GitHub's web interface.
+            # Existing assets are preserved; corrections need a new version.
+            EXISTING_ASSETS=$(gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name')
+            for ASSET in "${ASSETS[@]}"; do
+              if ! grep -Fxq "$(basename "$ASSET")" <<< "$EXISTING_ASSETS"; then
+                gh release upload "$RELEASE_TAG" "$ASSET"
+              fi
+            done
+          else
+            gh release create "$RELEASE_TAG" "${ASSETS[@]}" \
+              --verify-tag \
+              --title "Dofus Archipelago $PROJECT_VERSION" \
+              --notes-file "docs/releases/$RELEASE_TAG.md"
+          fi
